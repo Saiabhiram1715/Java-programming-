@@ -1,0 +1,83 @@
+import java.util.*;
+
+class Transaction {
+    String user;
+    double amount;
+    String location;
+    long time;
+
+    Transaction(String user, double amount, String location, long time) {
+        this.user = user;
+        this.amount = amount;
+        this.location = location;
+        this.time = time;
+    }
+}
+
+public class FraudDetection {
+
+    static boolean isFraud(Transaction t1, Transaction t2) {
+
+        // Rule 1: High amount
+        if (t2.amount > 50000) {
+            System.out.println("⚠ High amount detected!");
+            return true;
+        }
+
+        // Rule 2: Different location in short time (within 60 sec)
+        if (!t1.location.equals(t2.location) && (t2.time - t1.time) < 60000) {
+            System.out.println("⚠ Location mismatch in short time!");
+            return true;
+        }
+
+        // Rule 3: Too many transactions quickly
+        if ((t2.time - t1.time) < 10000) {
+            System.out.println("⚠ Too many transactions quickly!");
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter user name: ");
+        String user = sc.nextLine();
+
+        System.out.print("Enter first transaction amount: ");
+        double amt1 = sc.nextDouble();
+        sc.nextLine();
+
+        System.out.print("Enter location: ");
+        String loc1 = sc.nextLine();
+
+        long time1 = System.currentTimeMillis();
+
+        Transaction t1 = new Transaction(user, amt1, loc1, time1);
+
+        System.out.println("\n--- Next Transaction ---");
+
+        System.out.print("Enter second transaction amount: ");
+        double amt2 = sc.nextDouble();
+        sc.nextLine();
+
+        System.out.print("Enter location: ");
+        String loc2 = sc.nextLine();
+
+        long time2 = System.currentTimeMillis();
+
+        Transaction t2 = new Transaction(user, amt2, loc2, time2);
+
+        System.out.println("\nChecking for fraud...");
+
+        if (isFraud(t1, t2)) {
+            System.out.println("❌ Fraudulent Transaction!");
+        } else {
+            System.out.println("✅ Transaction Safe");
+        }
+
+        sc.close();
+    }
+}
